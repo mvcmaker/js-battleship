@@ -1,11 +1,15 @@
 function init() {
+	initArray();
 	drawBattleField();
 	$('#txtCoorX').prop('pattern', '[1-' + NUM_COLS + ']'); // [1-10]
 	$('#txtCoorY').prop('pattern', '[A-' + String.fromCharCode(65+NUM_ROWS-1) + ']'); // [A-J]
-
+	_ships.forEach((shipLong) => {
+		placeShip(shipLong);
+	});
+	renderBattlefield();
 }
 
-init();
+
 /*
 _battlefield[1][2] = 'x'; // x means water fired
 _battlefield[1][4] = 'x'; 
