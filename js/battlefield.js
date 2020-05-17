@@ -7,6 +7,24 @@ function init() {
 		placeShip(shipLong);
 	});
 	renderBattlefield();
+	$('.water').click(function(e) {
+		let classValue = $(this).attr('class'); //form:  "X_Y water"
+		let coordinateValue = classValue.substring(0, classValue.indexOf(' ')); // form: "X_Y"
+		let coordinates = coordinateValue.split("_");
+		coordinates = coordinates.map((el) => {
+			return parseInt(el);
+		});
+		//console.log(coordinates);
+		let result = fire(coordinates[0], coordinates[1]);
+		renderBattlefield();
+		okMessage(result);
+		if(endGame()) {
+
+			okMessage("FINISHED GAME!!! (total torpedos:" + _fires + ")");
+			$('.water').off('click');
+		}
+
+	});
 }
 
 
@@ -36,28 +54,13 @@ function drawBattleField() {
 		let td = $('<td>').text(String.fromCharCode(65+i));
 		tr.append(td);
 		for(let j=0; j<NUM_COLS; j++) {
-			tr.append($('<td>').addClass(i + "_" + j)); // This draw a water (ocean) cell
+			tr.append($('<td>').addClass([i + "_" + j, "water"])); // This draw a water (ocean) cell
 		}
 		ocean.append(tr);
 	}
 }
 
-/**
- * Print a message into defined label identified by #error-message
- * @param {string} message The message for display
- */
-function errorMessage(message) {
-	$('#error-message').show().text(message);
-}
 
-
-/**
- * Print a message into defined label identified by #message
- * @param {string} message The message for display
- */
-function okMessage(message) {
-	$('#message').show().text(message);
-}
 
 
 $('#btnFire').click((e) => {
@@ -81,6 +84,11 @@ $('#btnFire').click((e) => {
 	let message = fire(y-1, x-1);
 	okMessage(message);
 	renderBattlefield();
+	if(endGame()) {
+		okMessage("FINISHED GAME!!! (total torpedos:" + _fires + ")");
+		$(this).off('click');
+		$(this).attr('disabled', true);
+	}
 });
 
 $('#txtCoorY').keyup((e) => {
@@ -89,3 +97,4 @@ $('#txtCoorY').keyup((e) => {
 	$(this).val(e.key.toUpperCase());
 
 });
+

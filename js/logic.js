@@ -6,7 +6,7 @@ function renderBattlefield() {
 			if(value == 'x') { // Torpedo in water
 				cell.text('x');
 			}
-			else if(value == 'S') { // Is ship
+			else if(value == 'S' && _showShips) { // Is ship
 				cell.css('background-color', '#aaa');
 			}
 			else if(value == 'D') { // Is damaged
@@ -126,6 +126,7 @@ function replaceLettersInField(oldLetter, newLetter) {
 }
 
 function fire(x, y) {
+	_fires++;
 	let returnMessage = '';
 	if(_battlefield[x][y] == 0) {
 		_battlefield[x][y] = 'x';
@@ -176,7 +177,7 @@ function detectSinking(x, y) {
 		
 		let firstYCoord = -1;
 		let lastYCoord = -1;
-		for(j=x; j>0; j--) {
+		for(j=x; j>=0; j--) {
 			if(_battlefield[j][y] == 'D' || _battlefield[j][y] == 'S') {
 				firstYCoord = j;
 			}
@@ -185,7 +186,7 @@ function detectSinking(x, y) {
 			}
 		}
 		possiblePositions = detectBorders(j-1, y);
-		if(j == 0 && firstYCoord == -1 && !possiblePositions[0])
+		if(j <= 0 && firstYCoord == -1 && !possiblePositions[0])
 			firstYCoord = 0;
 
 		for(j=x; j<NUM_ROWS; j++) {
@@ -221,7 +222,7 @@ function detectSinking(x, y) {
 		
 		let firstXCoord = -1;
 		let lastXCoord = -1;
-		for(i=y; i>0; i--) {
+		for(i=y; i>=0; i--) {
 			if(_battlefield[x][i] == 'D' || _battlefield[x][i] == 'S') {
 				firstXCoord = i;
 			}
@@ -230,7 +231,7 @@ function detectSinking(x, y) {
 			}
 		}
 		possiblePositions = detectBorders(x, i);
-		if(i == 0 && firstXCoord == -1 && !possiblePositions[3])
+		if(i = 0 && firstXCoord == -1 && !possiblePositions[3])
 			firstXCoord = 0;
 
 		for(i=y; i<NUM_COLS; i++) {
@@ -294,17 +295,24 @@ function shipPosition(x, y) {
 function detectBorders(x, y) {
 	let possiblePositions = [true, true, true, true]; // Up, right, down, left
 
-	if(x == 0) {
+	if(x <= 0) {
 		possiblePositions[0] = false;
 	}
-	if(x == NUM_ROWS - 1) {
+	if(x >= NUM_ROWS - 1) {
 		possiblePositions[2] = false;
 	}
-	if(y == 0) {
+	if(y <= 0) {
 		possiblePositions[3] = false;
 	}
-	if(y == NUM_COLS -1) {
+	if(y >= NUM_COLS -1) {
 		possiblePositions[1] = false;
 	}
 	return possiblePositions;
+}
+
+function endGame() {
+	if(_ships.length) {
+		return false;
+	}
+	return true;
 }
